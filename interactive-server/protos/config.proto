@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package pbs;
+
+import public "common.proto";
+
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.gogoproto_import) = false;
+
+service ConfigService {
+    rpc Update (Config) returns (Empty);
+}
+
+message Config {
+    string id = 1 [(gogoproto.jsontag)="id",(gogoproto.moretags)="bson:\"_id,omitempty\""]; //id
+    string user_id = 2 [(gogoproto.jsontag)="user_id",(gogoproto.moretags)="bson:\"user_id\""]; //用户ID
+    uint32 anitialiasing_switch = 3 [(gogoproto.jsontag)="anitialiasing_switch",(gogoproto.moretags)="bson:\"anitialiasing_switch\""]; //抗锯齿开关 0开启 1关闭
+    uint32 detail_switch = 4 [(gogoproto.jsontag)="detail_switch",(gogoproto.moretags)="bson:\"detail_switch\""]; //细节开关 0开启 1 关闭
+    uint32 mouth_switch = 5 [(gogoproto.jsontag)="mouth_switch",(gogoproto.moretags)="bson:\"mouth_switch\""]; //口型开关 0开启 1关闭
+    uint32 signal_switch = 6 [(gogoproto.jsontag)="signal_switch",(gogoproto.moretags)="bson:\"signal_switch\""]; //手势开关 0开启 1关闭
+    uint32 mike_switch = 7 [(gogoproto.jsontag)="mike_switch",(gogoproto.moretags)="bson:\"mike_switch\""]; //麦克开关 0开启 1关闭
+    uint32 voice_switch = 8 [(gogoproto.jsontag)="voice_switch",(gogoproto.moretags)="bson:\"voice_switch\""]; //语音播放开关 0开启 1关闭
+    uint32 volume = 9 [(gogoproto.jsontag)="volume",(gogoproto.moretags)="bson:\"volume\""]; //音量大小 0-100
+    uint32 subtitle_switch = 10 [(gogoproto.jsontag)="subtitle_switch",(gogoproto.moretags)="bson:\"subtitle_switch\""];//字幕显示开关 0开启 1关闭
+}

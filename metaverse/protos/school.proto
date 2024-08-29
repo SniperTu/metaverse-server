@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pbs;
+
+import public "common.proto";
+
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.gogoproto_import) = false;
+
+// 学校
+message School {
+	string id = 1 [(gogoproto.jsontag)="id",(gogoproto.moretags)="bson:\"_id,omitempty\""];  //id
+	string name = 2 [(gogoproto.jsontag)="name",(gogoproto.moretags)="bson:\"name\""]; //学校名称
+	int64 created_at = 3 [(gogoproto.jsontag)="created_at",(gogoproto.moretags)="bson:\"created_at\""]; //创建时间
+	int64 updated_at = 4 [(gogoproto.jsontag)="updated_at",(gogoproto.moretags)="bson:\"updated_at\""]; //更新时间
+	int64 deleted_at = 5 [(gogoproto.jsontag)="deleted_at",(gogoproto.moretags)="bson:\"deleted_at\""]; //删除时间
+	string province_code = 6 [(gogoproto.jsontag)="province_code",(gogoproto.moretags)="bson:\"province_code\""]; //学校所属省份代码
+	string city_code = 7 [(gogoproto.jsontag)="city_code",(gogoproto.moretags)="bson:\"city_code\""]; //学校所属城市代码
+}

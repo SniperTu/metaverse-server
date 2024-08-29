@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+//包名
+package pbs;
+
+import public "common.proto";
+
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.gogoproto_import) = false;
+
+service RoleService {
+    rpc Create (Role) returns (Empty);
+}
+
+message Role {
+    string id = 1 [(gogoproto.jsontag)="id",(gogoproto.moretags)="bson:\"_id,omitempty\""];
+    string name = 2 [(gogoproto.jsontag)="name",(gogoproto.moretags)="bson:\"name\""];//角色名称
+    uint32 gender = 3 [(gogoproto.jsontag)="gender",(gogoproto.moretags)="bson:\"gender\""];//性别 0=女 1=男
+    string avatar = 7 [(gogoproto.jsontag)="avatar",(gogoproto.moretags)="bson:\"avatar\""];//角色头像base64
+    int64 updated_at = 4 [(gogoproto.jsontag)="updated_at",(gogoproto.moretags)="bson:\"updated_at\""];//更新时间
+    int64 deleted_at = 5 [(gogoproto.jsontag)="deleted_at",(gogoproto.moretags)="bson:\"deleted_at\""];//删除时间
+    int64 created_at = 6 [(gogoproto.jsontag)="created_at",(gogoproto.moretags)="bson:\"created_at\""];//创建时间
+}

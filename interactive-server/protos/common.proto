@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package pbs;
+
+import public "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.gogoproto_import) = false;
+
+message Param {
+    string key = 1; // 参数名
+}
+
+message Status {
+    int32 code = 1 [(gogoproto.nullable) = false,(gogoproto.customtype) = "int8"]; //-1=需要登录 0=失败 1=成功
+    string msg = 2;
+}
+
+message Empty {
+}

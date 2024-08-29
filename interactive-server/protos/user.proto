@@ -1,0 +1,174 @@
+/**
+    * @Description: 用户相关接口定义
+    * @Author: daniel(2023/2/13)
+**/
+syntax = "proto3";
+
+//包名
+package pbs;
+
+import public "common.proto";
+import public "role.proto";
+import public "school.proto";
+
+option (gogoproto.goproto_sizecache_all) = false;
+option (gogoproto.goproto_unkeyed_all) = false;
+option (gogoproto.goproto_unrecognized_all) = false;
+option (gogoproto.gogoproto_import) = false;
+
+
+service UserService {
+	rpc Login (LoginUser) returns (User);//用户登录
+	rpc AdminLogin (LoginUser) returns (User);//管理端用户登录
+	rpc Logout (UserLogoutReq) returns (Empty); //用户登出
+	rpc GetCode (Empty) returns (CodeResp);//获取登录验证码
+	rpc Create (CreateUserReq) returns (Empty); //创建账户
+	rpc Update (User) returns (Empty); //更新个人信息
+	rpc ChangePassword(ChangePasswordReq) returns (Empty); //更改密码
+	rpc Register(RegisterReq) returns (Empty); //注册
+	rpc SendCode(SendCodeReq) returns (Empty); //发送手机验证码
+	rpc GetLoginSummary(Empty) returns (UserLoginSummary); //获取登录汇总数据
+	rpc GetList(UserListReq) returns (UserListResp); //获取用户列表接口
+	rpc GetMyAccontInfo(Empty) returns (User); //获取当前登录账户的账户信息
+	rpc BanToPost(UserSwitchReq) returns (Empty); //账户禁言接口
+	rpc Ban(UserSwitchReq) returns (Empty); //用户禁用接口
+	rpc ClientSysConfig(ClientConfigReq) returns (Empty); //客户端系统配置提交
+}
+
+message UserLogoutReq {
+	string user_id = 1; //登出用户id
+}
+//用户开关通用请求体
+message UserSwitchReq {
+	string id = 1;
+	bool turn_on = 2;//开关：true打开 false关闭
+}
+
+message CreateUserReq {
+	string user_name = 1; //用户名
+	string user_fname = 2; //姓名
+	string mobile = 3; //手机号码
+	string password = 4; //密码
+	UserType user_type = 5; //用户类型
+	string school_id = 6; //学校id
+}
+
+
+message UpdateUserReq {
+	string id = 1; //用户id
+	string user_name = 2; //用户名
+	string user_fname = 3; //姓名
+	string mobile = 4; //手机号码
+	string password = 5; //密码
+	UserType user_type = 6; //用户类型
+	string school_id = 7; //学校id
+	uint32 gender = 8;//性别 0=女 1=男
+	string avatar = 9;//头像base64
+
+}
+
+
+message LoginUser {
+	string user_name = 1; //登录名
+	string password = 2; //登录密码
+	string code = 3;//验证码
+}
+
+message ChangePasswordReq {
+	string password = 1; //新密码
+	string old_password = 2; //旧密码
+}
+
+message RegisterReq {
+	string mobile = 1;
+	string password = 2;
+	string code = 3;
+}
+
+message SendCodeReq {
+	string mobile = 1;
+}
+
+message CodeResp {
+	string code = 1;//验证码图片base64编码
+	string id = 2;
+}
+
+message Users {
+	repeated User data = 1 [(gogoproto.nullable) = false];
+	int64 count = 2;
+}
+
+message UserListReq {
+	string user_fname = 1 [(gogoproto.jsontag) = "user_fname", (gogoproto.moretags) = "bson:\"user_fname\""];//姓名
+	string mobile = 2 [(gogoproto.jsontag) = "mobile", (gogoproto.moretags) = "bson:\"mobile\""];//手机号码
+	int64 page_number = 3; //页码，从1开始
+	int64 page_size = 4; //页面大小，默认10
+}
+
+message UserListResp {
+	repeated User users = 1; //用户信息列表
+	int64 total_pages = 2; //总页数
+	int64  page_number = 3; //当前页码
+	int64 total_rows = 4; //总条数
+}
+
+enum UserType {
+	UserType_Omit = 0 ;//缺省值
+	nomral = 1; //普通类型
+	admin = 2; //学校管理员
+	superAdmin = 3; //超级管理员
+}
+
+message ClientConfig {
+	int32 msaa = 1 [(gogoproto.jsontag) = "msaa", (gogoproto.moretags) = "bson:\"msaa\""]; //抗锯齿开关 0关1开
+	int32 detail = 2 [(gogoproto.jsontag) = "detail", (gogoproto.moretags) = "bson:\"detail\""]; //细节开关 0关1开
+	int32 mouth_shape = 3 [(gogoproto.jsontag) = "mouth_shape", (gogoproto.moretags) = "bson:\"mouth_shape\""]; //口型开关 0关1开
+	int32 gesture = 4 [(gogoproto.jsontag) = "gesture", (gogoproto.moretags) = "bson:\"gesture\""]; //手势开关 0关1开
+	int32 microphone = 5 [(gogoproto.jsontag) = "microphone", (gogoproto.moretags) = "bson:\"microphone\""]; //麦克风开关 0关1开
+	int32 voice = 6 [(gogoproto.jsontag) = "voice", (gogoproto.moretags) = "bson:\"voice\""]; //语音播放音量开关 0关1开
+	int32 subtitle = 7 [(gogoproto.jsontag) = "subtitle", (gogoproto.moretags) = "bson:\"subtitle\""]; //字幕开关 0关1开
+	int32 volume = 8 [(gogoproto.jsontag)= "volume",(gogoproto.moretags)="bson:\"volume\""]; //音量大小0-100
+}
+message ClientConfigReq {
+	string user_id = 1; //用户id
+	ClientConfig client_config = 2; //客户端系统配置
+}
+
+//用户信息表结构
+message User {
+	string id = 1 [(gogoproto.jsontag) = "id", (gogoproto.moretags) = "bson:\"_id,omitempty\""]; //用户id
+	string user_name = 2 [(gogoproto.jsontag) = "user_name", (gogoproto.moretags) = "bson:\"user_name\""];//用户名
+	string user_fname = 3 [(gogoproto.jsontag) = "user_fname", (gogoproto.moretags) = "bson:\"user_fname\""];//姓名
+	uint32 gender = 4 [(gogoproto.jsontag) = "gender", (gogoproto.moretags) = "bson:\"gender\""];//性别 0=女 1=男
+	string id_card = 5 [(gogoproto.jsontag) = "id_card", (gogoproto.moretags) = "bson:\"id_card\""];//身份证
+	string avatar = 6 [(gogoproto.jsontag) = "avatar", (gogoproto.moretags) = "bson:\"avatar\""];//头像base64
+	UserType user_type = 7 [(gogoproto.jsontag) = "user_type", (gogoproto.moretags) = "bson:\"user_type\""];//见枚举定义
+	string password = 8 [(gogoproto.jsontag) = "password", (gogoproto.moretags) = "bson:\"password\""];//密码
+	string email = 9 [(gogoproto.jsontag) = "email", (gogoproto.moretags) = "bson:\"email\""];//用户邮箱
+	string mobile = 10 [(gogoproto.jsontag) = "mobile", (gogoproto.moretags) = "bson:\"mobile\""];//手机号码
+	string token = 11 [(gogoproto.jsontag) = "token", (gogoproto.moretags) = "bson:\"token\""];//认证临时令牌
+	uint32 status = 12 [(gogoproto.jsontag) = "status", (gogoproto.moretags) = "bson:\"status\""];//用户状态 0=正常 1=禁用 2=异常
+	int64 updated_at = 13 [(gogoproto.jsontag) = "updated_at", (gogoproto.moretags) = "bson:\"updated_at\""];//更新时间
+	int64 deleted_at = 14 [(gogoproto.jsontag) = "deleted_at", (gogoproto.moretags) = "bson:\"deleted_at\""];//删除时间
+	int64 created_at = 15 [(gogoproto.jsontag) = "created_at", (gogoproto.moretags) = "bson:\"created_at\""];//创建时间
+	int64 last_login = 16 [(gogoproto.jsontag) = "last_login", (gogoproto.moretags) = "bson:\"last_login\""];//最近登录时间
+	string user_signature = 17 [(gogoproto.jsontag) = "user_signature", (gogoproto.moretags) = "bson:\"user_signature\""];//用户个性签名
+	repeated Role Roles = 18 [(gogoproto.jsontag) = "roles", (gogoproto.moretags) = "bson:\"roles\""];//用户角色
+	uint32 user_model = 19 [(gogoproto.jsontag) = "user_model", (gogoproto.moretags) = "bson:\"user_model\""];//用户模型
+	int64 login_times = 20 [(gogoproto.jsontag) = "login_times", (gogoproto.moretags) = "bson:\"login_times\""]; //登录累积次数
+	int64 login_duration_min = 21 [(gogoproto.jsontag) = "login_duration_min", (gogoproto.moretags) = "bson:\"login_duration_min\""]; //累积登录时长(分钟)
+	int64 last_logout_time = 22 [(gogoproto.jsontag) = "last_logout_time", (gogoproto.moretags) = "bson:\"last_logout_time\""]; //最近登出时间(秒时间戳)
+	School school_info = 23 [(gogoproto.jsontag) = "school_info", (gogoproto.moretags) = "bson:\"school_info\""]; //学校信息
+	bool banned_to_post = 24 [(gogoproto.jsontag) = "banned_to_post", (gogoproto.moretags) = "bson:\"banned_to_post\""]; //禁言
+	ClientConfig client_config = 25 [(gogoproto.jsontag) = "client_config", (gogoproto.moretags) = "bson:\"client_config\""]; //客户端配置
+}
+
+//用户信息汇总表
+message UserLoginSummary {
+	uint32 login_user_total_count = 1 [(gogoproto.jsontag) = "login_user_total_count", (gogoproto.moretags) = "bson:\"login_user_total_count\""]; //累积登录人数
+	uint32 login_total_count = 2 [(gogoproto.jsontag) = "login_total_count", (gogoproto.moretags) = "bson:\"login_total_count\""]; //累积登录次数
+	uint64 login_total_duration = 3 [(gogoproto.jsontag) = "login_total_duration", (gogoproto.moretags) = "bson:\"login_total_duration\""]; //累积登录时长(分钟)
+	int64 created_at = 4 [(gogoproto.jsontag) = "created_at", (gogoproto.moretags) = "bson:\"created_at\""];//创建时间
+	int64 updated_at = 5 [(gogoproto.jsontag) = "updated_at", (gogoproto.moretags) = "bson:\"updated_at\""];    //更新时间
+}
